@@ -1,0 +1,23 @@
+{
+    "name": "Cloud Native Dev",
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "runArgs": ["--privileged"],
+    "forwardPorts": [30080],
+    "remoteUser": "root",
+    "postCreateCommand": "make kind-up",
+    "mounts": [
+      "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    ],
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "ms-azuretools.vscode-docker",
+          "ms-kubernetes-tools.vscode-kubernetes-tools",
+          "redhat.vscode-yaml"
+        ]
+      }
+    }
+  }
+  
