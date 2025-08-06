@@ -4,8 +4,8 @@ apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
     extraPortMappings:
-      - containerPort: 37831
-        hostPort: 37831
+      - containerPort: 31000
+        hostPort: 31000
     kubeadmConfigPatchesJSON6902:
       - group: kubeadm.k8s.io
         version: v1beta3

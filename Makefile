@@ -7,12 +7,21 @@ KIND_CLUSTER_NAME ?= cloud-native-dev
 # The application is built using Docker and deployed to the Kind cluster
 # The application is a sample cloud-native application that uses Kubernetes and Docker
 
-.PHONY: start-registry kind-up kind-down kind-status build-app app-deploy app-delete
+.PHONY: start-registry kind-up kind-down kind-status build-app app-deploy app-delete registry-status
 
 start-registry:
 	docker inspect -f '{{.State.Running}}' kind-registry 2>/dev/null | grep true || \
 	docker run -d --restart=always -p 6000:5000 --name kind-registry registry:2
 	docker network connect kind kind-registry || true
+
+.PHONY: registry-status
+
+registry-status:
+	@echo "🔍 Checking if 'kind-registry' container is running..."
+	@docker ps --filter "name=kind-registry"
+	@echo "\n🌐 Testing from dev container: curl http://kind-registry:5000/v2/_catalog"
+	@curl -sf http://kind-registry:5000/v2/_catalog && echo "✅ Registry is reachable from dev container" || echo "❌ Registry not reachable from dev container"
+
 
 kind-up: start-registry
 	kind delete cluster --name cloud-native-dev || true
@@ -40,9 +49,9 @@ build-app:
 	docker push localhost:6000/$(IMAGE_NAME) || true
 
 app-deploy:
-	kubectl apply -f k8s/
+	kubectl apply -f platform-k8s/
 
 app-delete:
-	kubectl delete -f k8s/
+	kubectl delete -f platform-k8s/
 
 
